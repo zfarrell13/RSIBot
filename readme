@@ -1,30 +1,28 @@
 rsi_optimizations.py:
 
-This Python script is designed to optimize Relative Strength Index (RSI) trading strategies for a set of stocks listed on the Alpaca trade platform. 
-The script retrieves daily bars for a set of specified symbols over a defined period and calculates the RSI for each symbol. It then iterates through 
-a range of possible values for overbought and oversold thresholds and window sizes, calculating the total return for each combination. The script 
-returns the optimal RSI values for each symbol, which can be used to execute trades based on RSI.  The script uses the Alpaca API to retrieve data and 
-execute trades. The API keys are imported from a separate file named 'keys2.py'. The script also includes a function to send email notifications using 
-SMTP server.  The script runs an optimization function every 24 hours, which calculates the optimal RSI thresholds for each symbol. The optimization 
-function is run on a separate thread to ensure it does not interfere with the main trading function.  This script is intended to work in tandem with 
-a second script that executes trades based on the optimal RSI values returned by this script. The second script is not included in this code and must
-be implemented separately.  To use this script, you will need to modify the parameters at the beginning of the script to suit your desired symbols, 
-timeframes, and optimization parameters. You will also need to provide your own API keys and SMTP server information in the 'keys2.py' file.
+This Python script is designed to optimize Relative Strength Index (RSI) trading strategies for a set of stocks listed on the Alpaca trade platform. The script retrieves daily bars for a set of specified symbols over a defined period and calculates the RSI for each symbol. It then iterates through a range of possible values for overbought and oversold thresholds and window sizes, calculating the total return for each combination. The script returns the optimal RSI values for each symbol, which can be used to execute trades based on RSI.
+
+The script uses the Alpaca API to retrieve data and execute trades. The API keys are imported from a separate file named 'keys2.py'. The script also includes a function to send email notifications using SMTP server.
+
+The script runs an optimization function every 24 hours, which calculates the optimal RSI thresholds for each symbol. The optimization function is run on a separate thread to ensure it does not interfere with the main trading function.
+
+This script is intended to work in tandem with a second script that executes trades based on the optimal RSI values returned by this script. The second script is not included in this code and must be implemented separately.
+
+To use this script, you will need to modify the parameters at the beginning of the script to suit your desired symbols, timeframes, and optimization parameters. You will also need to provide your own API keys and SMTP server information in the 'keys2.py' file.
 
 order_exec.py:
 
-This is the second Python script for a trading bot that works in tandem with rsi_optimizations.py. It includes functions to execute trades based on 
-the RSI (Relative Strength Index) indicator and to get the current price of a list of symbols.  The script uses the Alpaca Trading API and keys are 
-imported from another Python script. The symbols list and optimal_values dictionary are also imported from another Python script.  The 
-execute_trades() function takes in the list of symbols and current prices for each symbol, and uses the optimal RSI values to execute trades based on 
-whether the current RSI is above the overbought threshold or below the oversold threshold. If the RSI is above the overbought threshold, it sells a 
-specified quantity of shares for that symbol; if the RSI is below the oversold threshold, it buys as many shares as possible based on available funds.
-The function also prints messages for each trade, including whether the trade was successful or not.  The get_current_prices() function takes in a 
-list of symbols and returns a dictionary of the current prices for each symbol. It uses the Alpaca Trading API to get the most recent bar for each 
-symbol and extract the current price.  The script also includes a continuous loop that checks the current time and executes the execute_trades() 
-function only during market hours. The loop waits for 10 minutes before checking prices again when the market is closed. The account buying power is 
-also displayed at the end of the loop.Together with the first Python script, this trading bot can execute trades based on the RSI indicator and o
-ptimize RSI thresholds for a list of symbols.
+This is the second Python script for a trading bot that works in tandem with rsi_optimizations. It includes functions to execute trades based on the RSI (Relative Strength Index) indicator and to get the current price of a list of symbols.
+
+The script uses the Alpaca Trading API and keys are imported from keys2.py. The symbols list and optimal_values dictionary are also imported from another Python script.
+
+The execute_trades() function takes in the list of symbols and current prices for each symbol, and uses the optimal RSI values to execute trades based on whether the current RSI is above the overbought threshold or below the oversold threshold. If the RSI is above the overbought threshold, it sells a specified quantity of shares for that symbol; if the RSI is below the oversold threshold, it buys as many shares as possible based on available funds. The function also prints messages for each trade, including whether the trade was successful or not.
+
+The get_current_prices() function takes in a list of symbols and returns a dictionary of the current prices for each symbol. It uses the Alpaca Trading API to get the most recent bar for each symbol and extract the current price.
+
+The script also includes a continuous loop that checks the current time and executes the execute_trades() function only during market hours. The loop waits for 10 minutes before checking prices again when the market is closed. The account buying power is also displayed at the end of the loop.
+
+Together with the first Python script, this trading bot can execute trades based on the RSI indicator and optimize RSI thresholds for a list of symbols.
 
 porposed architecture
 https://lucid.app/lucidchart/d96484a1-0512-4078-a13d-1e9bd7d0ec71/edit?invitationId=inv_62e35864-64e3-4c21-8d3b-2cea6fcc304c&page=0_0#
