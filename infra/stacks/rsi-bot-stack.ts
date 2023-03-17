@@ -1,11 +1,26 @@
-import * as cdk from 'aws-cdk-lib';
+import { Stack, StackProps, RemovalPolicy } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
+import { Bucket } from 'aws-cdk-lib/aws-s3';
 
-export class RsiBotStack extends cdk.Stack {
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+interface RsiBotStackProps extends StackProps {
+  bucketName: string;
+}
+export class RsiBotStack extends Stack {
+  public readonly bucket: Bucket;
+
+  constructor(scope: Construct, id: string, props: RsiBotStackProps) {
     super(scope, id, props);
 
-    // The code that defines your stack goes here
+    this.bucket = this._createS3Bucket(props.bucketName);
+  }
 
+  _createS3Bucket(bucketName: string) {
+    const s3Bucket = new Bucket(this, 'rsi-bot-bucket', {
+      bucketName,
+      removalPolicy: RemovalPolicy.RETAIN,
+    });
+
+    return s3Bucket;
   }
 }
+

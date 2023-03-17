@@ -8,3 +8,6 @@ env:
 
   # AWS region string: us-east-1
   region: us-east-1
+
+s3Bucket:
+  name: rsi-bot-data-bucket

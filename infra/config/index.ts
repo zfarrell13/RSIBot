@@ -14,6 +14,10 @@ export const env = {
   region: config.env.region,
 };
 
+const bucketName = config.s3Bucket.name;
+
 export const rsiBotStackProps = {
   env,
+  bucketName,
 };
+
