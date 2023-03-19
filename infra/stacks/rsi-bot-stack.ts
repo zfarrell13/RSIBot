@@ -1,7 +1,7 @@
 import { Stack, StackProps, RemovalPolicy, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
-import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { Function, Runtime, Code, LayerVersion } from 'aws-cdk-lib/aws-lambda';
 import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
 import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 
@@ -10,12 +10,14 @@ interface RsiBotStackProps extends StackProps {
 }
 export class RsiBotStack extends Stack {
   public readonly bucket: Bucket;
+  public readonly customLayer: LayerVersion;
 
   constructor(scope: Construct, id: string, props: RsiBotStackProps) {
     super(scope, id, props);
 
     this.bucket = this._createS3Bucket(props.bucketName);
-    this._createRsiOptimizationsLambda();
+    this.customLayer = this._createCustomLayer();
+    this._createRsiOptimizationsLambda(this.customLayer);
   }
 
   _createS3Bucket(bucketName: string): Bucket {
@@ -27,7 +29,18 @@ export class RsiBotStack extends Stack {
     return s3Bucket;
   }
 
-  _createRsiOptimizationsLambda(): void {
+  _createCustomLayer() {
+    const customLayer = new LayerVersion(this, 'rsi-bot-custom-lambda-layer', {
+      layerVersionName: 'rsi-bot-custom-lambda-layer',
+      code: Code.fromAsset('lambdas/layers/rsi_layer.zip'),
+      compatibleRuntimes: [Runtime.PYTHON_3_9],
+      description: 'RSI Bot custom layer for ta and alpaca_trade_api packages',
+    });
+
+    return customLayer;
+  }
+
+  _createRsiOptimizationsLambda(customLayer: LayerVersion): void {
     const rsiOptimizationsFunction = new Function(
       this,
       'rsi-optimizations-function',
@@ -37,6 +50,7 @@ export class RsiBotStack extends Stack {
         code: Code.fromAsset('lambdas'),
         memorySize: 256,
         timeout: Duration.minutes(10),
+        layers: [customLayer],
       }
     );
 
