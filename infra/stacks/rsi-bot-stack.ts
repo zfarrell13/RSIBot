@@ -2,6 +2,8 @@ import { Stack, StackProps, RemovalPolicy, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import { Bucket } from 'aws-cdk-lib/aws-s3';
 import { Function, Runtime, Code } from 'aws-cdk-lib/aws-lambda';
+import { Rule, Schedule } from 'aws-cdk-lib/aws-events';
+import { LambdaFunction } from 'aws-cdk-lib/aws-events-targets';
 
 interface RsiBotStackProps extends StackProps {
   bucketName: string;
@@ -37,6 +39,12 @@ export class RsiBotStack extends Stack {
         timeout: Duration.minutes(10),
       }
     );
+
+    const rule = new Rule(this, 'rsi-optimizations-rule', {
+      schedule: Schedule.rate(Duration.hours(24)),
+    });
+
+    rule.addTarget(new LambdaFunction(rsiOptimizationsFunction));
   }
 }
 
