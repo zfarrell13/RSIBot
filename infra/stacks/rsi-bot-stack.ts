@@ -49,6 +49,7 @@ export class RsiBotStack extends Stack {
       this,
       'rsi-optimizations-function',
       {
+        functionName: 'rsi-optimizations-function',
         runtime: Runtime.PYTHON_3_9,
         handler: 'rsi_optimizations.lambda_handler',
         code: Code.fromAsset('lambdas'),
@@ -69,6 +70,7 @@ export class RsiBotStack extends Stack {
   // create rsi order exec lambda
   _createRsiOrderExecLambda(customLayer: LayerVersion): void {
     const rsiOrderExecLambda = new Function(this, 'rsi-order-exec-function', {
+      functionName: 'rsi-order-exec-function',
       runtime: Runtime.PYTHON_3_9,
       handler: 'order_exec.lambda_handler',
       code: Code.fromAsset('lambdas'),
