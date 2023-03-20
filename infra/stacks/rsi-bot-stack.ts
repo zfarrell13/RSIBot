@@ -60,7 +60,7 @@ export class RsiBotStack extends Stack {
   _createS3Bucket(bucketName: string): Bucket {
     const s3Bucket = new Bucket(this, 'rsi-bot-bucket', {
       bucketName,
-      removalPolicy: RemovalPolicy.RETAIN,
+      removalPolicy: RemovalPolicy.DESTROY,
     });
 
     return s3Bucket;
@@ -70,12 +70,21 @@ export class RsiBotStack extends Stack {
   _createCustomLayer(): LayerVersion {
     const customLayer = new LayerVersion(this, 'rsi-bot-custom-lambda-layer', {
       layerVersionName: 'rsi-bot-custom-lambda-layer',
-      code: Code.fromAsset('lambdas/layers/rsi_layer.zip'),
+      code: Code.fromAsset('lambda_layers/rsi_layer.zip'),
       compatibleRuntimes: [Runtime.PYTHON_3_9],
       description: 'RSI Bot custom layer for ta and alpaca_trade_api packages',
     });
 
     return customLayer;
+  }
+
+  // create numpy layer
+  _createNumpyLayer(): void {
+    LayerVersion.fromLayerVersionArn(
+      this,
+      'numpy-managed-layer',
+      'arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:4'
+    );
   }
 
   // create rsi optimizations lambda
@@ -94,7 +103,14 @@ export class RsiBotStack extends Stack {
         code: Code.fromAsset('lambdas'),
         memorySize: 512,
         timeout: Duration.minutes(10),
-        layers: [customLayer],
+        layers: [
+          customLayer,
+          LayerVersion.fromLayerVersionArn(
+            this,
+            'numpy-managed-layer',
+            'arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:4'
+          ),
+        ],
         role: role,
       }
     );
@@ -119,7 +135,14 @@ export class RsiBotStack extends Stack {
       code: Code.fromAsset('lambdas'),
       memorySize: 512,
       timeout: Duration.minutes(10),
-      layers: [customLayer],
+      layers: [
+        customLayer,
+        LayerVersion.fromLayerVersionArn(
+          this,
+          'np-managed-layer',
+          'arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:4'
+        ),
+      ],
     });
 
     return rsiOrderExecLambda;
