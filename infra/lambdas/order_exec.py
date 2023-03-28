@@ -9,7 +9,7 @@ from alpaca.trade.client import TradingClient
 # Read keys from Lambda environment variables
 API_KEY = os.environ['API_KEY']
 SECRET_KEY = os.environ['SECRET_KEY']
-BASE_URL = os.environ['base_url']
+BASE_URL = os.environ['BASE_URL']
 
 alpaca = api.REST(API_KEY, SECRET_KEY, BASE_URL)
 trading_client = TradingClient(API_KEY, SECRET_KEY, paper=True)
@@ -17,6 +17,8 @@ account = trading_client.get_account()
 
 TIMEFRAME = "1Min"
 QTY = 6
+
+symbols = ["AAPL", "GOOG", "AMZN"]
 
 def get_current_prices(symbols):
     current_prices = {}
@@ -116,9 +118,9 @@ print('${} is available as buying power.'.format(account.buying_power))
 
 def lambda_handler(event, context):
     # Get the payload from rsi optimization Lambda
-    payload = event['Payload']
+    # payload = event['Payload']
     optimal_values = payload['optimal_values']
-    symbols = payload['symbols']
+    # symbols = payload['symbols']
     
     current_prices = get_current_prices(symbols)
     execute_trades(symbols, current_prices, optimal_values)
