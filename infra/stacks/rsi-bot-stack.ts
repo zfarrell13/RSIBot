@@ -11,6 +11,9 @@ import {
   Effect,
 } from 'aws-cdk-lib/aws-iam';
 
+import { config } from 'dotenv';
+
+config();
 interface RsiBotStackProps extends StackProps {
   bucketName: string;
 }
@@ -49,8 +52,8 @@ export class RsiBotStack extends Stack {
   _attachS3AccessPolicy(role: Role, bucket: Bucket): void {
     const s3AccessPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
-      actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject'],
-      resources: [bucket.arnForObjects('*')],
+      actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 'logs:*'],
+      resources: [bucket.arnForObjects('*'), 'arn:aws:logs:*:*:*'],
     });
 
     role.addToPolicy(s3AccessPolicy);
@@ -101,7 +104,7 @@ export class RsiBotStack extends Stack {
         runtime: Runtime.PYTHON_3_9,
         handler: 'rsi_optimizations.lambda_handler',
         code: Code.fromAsset('lambdas'),
-        memorySize: 512,
+        memorySize: 1536,
         timeout: Duration.minutes(10),
         layers: [
           customLayer,
@@ -111,6 +114,10 @@ export class RsiBotStack extends Stack {
             'arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:4'
           ),
         ],
+        environment: {
+          API_KEY: process.env.API_KEY || '',
+          SECRET_KEY: process.env.SECRET_KEY || '',
+        },
         role: role,
       }
     );
@@ -133,7 +140,7 @@ export class RsiBotStack extends Stack {
       runtime: Runtime.PYTHON_3_9,
       handler: 'order_exec.lambda_handler',
       code: Code.fromAsset('lambdas'),
-      memorySize: 512,
+      memorySize: 1536,
       timeout: Duration.minutes(10),
       layers: [
         customLayer,
@@ -143,6 +150,11 @@ export class RsiBotStack extends Stack {
           'arn:aws:lambda:us-east-1:336392948345:layer:AWSSDKPandas-Python39:4'
         ),
       ],
+      environment: {
+        API_KEY: process.env.API_KEY || '',
+        SECRET_KEY: process.env.SECRET_KEY || '',
+        BASE_URL: process.env.BASE_URL || '',
+      },
     });
 
     return rsiOrderExecLambda;
