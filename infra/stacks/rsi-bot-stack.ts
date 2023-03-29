@@ -27,19 +27,18 @@ export class RsiBotStack extends Stack {
     super(scope, id, props);
 
     this.bucket = this._createS3Bucket(props.bucketName);
-    this.lambdaRole = this._createS3AccessRole();
-    this._attachS3AccessPolicy(this.lambdaRole, this.bucket);
+    this.lambdaRole = this._createIamAccessRole();
+    this._attachIamAccessPolicy(this.lambdaRole, this.bucket);
     this.customLayer = this._createCustomLayer();
-    this.rsiOrderExecLambda = this._createRsiOrderExecLambda(this.customLayer);
-    this._createRsiOptimizationsLambda(
+    this.rsiOrderExecLambda = this._createRsiOrderExecLambda(
       this.customLayer,
-      this.lambdaRole,
-      this.rsiOrderExecLambda
+      this.lambdaRole
     );
+    this._createRsiOptimizationsLambda(this.customLayer, this.lambdaRole);
   }
 
-  // create s3 access role for lambda
-  _createS3AccessRole(): Role {
+  // create iam access role for lambda
+  _createIamAccessRole(): Role {
     const role = new Role(this, 'rsi-optimizations-function-role', {
       assumedBy: new ServicePrincipal('lambda.amazonaws.com'),
       roleName: 'rsi-optimizations-function-role',
@@ -48,15 +47,15 @@ export class RsiBotStack extends Stack {
     return role;
   }
 
-  // attach s3 access policy
-  _attachS3AccessPolicy(role: Role, bucket: Bucket): void {
-    const s3AccessPolicy = new PolicyStatement({
+  // attach iam access policy
+  _attachIamAccessPolicy(role: Role, bucket: Bucket): void {
+    const iamPolicy = new PolicyStatement({
       effect: Effect.ALLOW,
       actions: ['s3:GetObject', 's3:PutObject', 's3:DeleteObject', 'logs:*'],
       resources: [bucket.arnForObjects('*'), 'arn:aws:logs:*:*:*'],
     });
 
-    role.addToPolicy(s3AccessPolicy);
+    role.addToPolicy(iamPolicy);
   }
 
   // create s3 bucket for logs
@@ -91,11 +90,7 @@ export class RsiBotStack extends Stack {
   }
 
   // create rsi optimizations lambda
-  _createRsiOptimizationsLambda(
-    customLayer: LayerVersion,
-    role: Role,
-    rsiOrderExecLambda: Function
-  ): void {
+  _createRsiOptimizationsLambda(customLayer: LayerVersion, role: Role): void {
     const rsiOptimizationsFunction = new Function(
       this,
       'rsi-optimizations-function',
@@ -122,9 +117,6 @@ export class RsiBotStack extends Stack {
       }
     );
 
-    // grant optimizations function permission to invoke order exec lambda
-    rsiOrderExecLambda.grantInvoke(rsiOptimizationsFunction);
-
     // add scheduler
     const rule = new Rule(this, 'rsi-optimizations-rule', {
       schedule: Schedule.rate(Duration.hours(24)),
@@ -134,7 +126,7 @@ export class RsiBotStack extends Stack {
   }
 
   // create rsi order exec lambda
-  _createRsiOrderExecLambda(customLayer: LayerVersion): Function {
+  _createRsiOrderExecLambda(customLayer: LayerVersion, role: Role): Function {
     const rsiOrderExecLambda = new Function(this, 'rsi-order-exec-function', {
       functionName: 'rsi-order-exec-function',
       runtime: Runtime.PYTHON_3_9,
@@ -155,7 +147,15 @@ export class RsiBotStack extends Stack {
         SECRET_KEY: process.env.SECRET_KEY || '',
         BASE_URL: process.env.BASE_URL || '',
       },
+      role: role,
     });
+
+    // add scheduler
+    const rule = new Rule(this, 'rsi-order-exec-rule', {
+      schedule: Schedule.rate(Duration.minutes(10)),
+    });
+
+    rule.addTarget(new LambdaFunction(rsiOrderExecLambda));
 
     return rsiOrderExecLambda;
   }
