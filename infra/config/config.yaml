@@ -4,7 +4,7 @@ stackName: rsi-bot-stack
 # environment
 env:
   # AWS account ID (12-digit integer): 123456789101112
-  # account: XXXXXXXXXXXXXXX
+  account: 639820528106
 
   # AWS region string: us-east-1
   region: us-east-1

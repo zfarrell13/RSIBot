@@ -8,5 +8,6 @@ const app = new App();
 new RsiBotStack(app, stackName, {
   ...rsiBotStackProps,
   env,
+  description: 'this stack include deployment of rsi bots',
 });
 

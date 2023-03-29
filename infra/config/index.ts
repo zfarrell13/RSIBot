@@ -12,6 +12,7 @@ export const stackName = config.stackName;
 
 export const env = {
   region: config.env.region,
+  account: config.env.account,
 };
 
 const bucketName = config.s3Bucket.name;
