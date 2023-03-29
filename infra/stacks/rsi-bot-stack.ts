@@ -14,9 +14,11 @@ import {
 import { config } from 'dotenv';
 
 config();
+
 interface RsiBotStackProps extends StackProps {
   bucketName: string;
 }
+
 export class RsiBotStack extends Stack {
   public readonly bucket: Bucket;
   public readonly customLayer: LayerVersion;
