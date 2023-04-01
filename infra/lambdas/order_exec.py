@@ -10,6 +10,7 @@ import pandas as pd
 API_KEY = os.environ['API_KEY']
 SECRET_KEY = os.environ['SECRET_KEY']
 BASE_URL = os.environ['BASE_URL']
+SYMBOLS = os.environ['SYMBOLS']
 
 api = tradeapi.REST(API_KEY, SECRET_KEY, BASE_URL)
 account = api.get_account()
@@ -17,7 +18,8 @@ account = api.get_account()
 TIMEFRAME = "1Min"
 QTY = 6
 
-symbols = ["AAPL", "GOOG", "AMZN"]
+symbols = [symbol for symbol in SYMBOLS.split(",") if symbol]
+# symbols = ["AAPL", "GOOG", "AMZN"]
 
 # Initialize a boto3 S3 client
 s3 = boto3.client('s3')

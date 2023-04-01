@@ -1,13 +1,20 @@
-# stack name
 stackName: rsi-bot-stack
 
-# environment
 env:
-  # AWS account ID (12-digit integer): 123456789101112
   account: 639820528106
-
-  # AWS region string: us-east-1
   region: us-east-1
 
 s3Bucket:
   name: rsi-bot-data-bucket
+
+optimizationLambda:
+  memorySize: 1536
+  timeout: 10 # minutes, max allowed 15 minutes
+  schedule: 24 # run every 24 hours, can be set between 1-24
+
+execLambda:
+  memorySize: 1536
+  timeout: 10 # minutes, max allowed 15 minutes
+  schedule: 10 # run every 10 mintes, can be set between 1-59
+
+symbols: AAPL, GOOG, AMZN

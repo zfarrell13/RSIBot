@@ -10,11 +10,13 @@ s3 = boto3.client('s3')
 
 API_KEY = os.environ['API_KEY']
 SECRET_KEY = os.environ['SECRET_KEY']
+SYMBOLS = os.environ['SYMBOLS']
 
 alpaca = api.REST(API_KEY, SECRET_KEY)
 
 days = 91
-symbols = ["AAPL", "GOOG", "AMZN"]
+symbols = [symbol for symbol in SYMBOLS.split(",") if symbol]
+# symbols = ["AAPL", "GOOG", "AMZN"]
 timeframe = "1Day"
 start_date = datetime.date.today() - datetime.timedelta(days=days)
 start = start_date.strftime("%Y-%m-%d")
