@@ -17,8 +17,17 @@ export const env = {
 
 const bucketName = config.s3Bucket.name;
 
+const optimizationLambda = config.optimizationLambda;
+
+const execLambda = config.execLambda;
+
+const symbols = config.symbols;
+
 export const rsiBotStackProps = {
   env,
   bucketName,
+  optimizationLambda,
+  execLambda,
+  symbols,
 };
 

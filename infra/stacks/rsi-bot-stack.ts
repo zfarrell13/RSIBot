@@ -17,6 +17,17 @@ config();
 
 interface RsiBotStackProps extends StackProps {
   bucketName: string;
+  optimizationLambda: {
+    memorySize: number;
+    timeout: number;
+    schedule: number;
+  };
+  execLambda: {
+    memorySize: number;
+    timeout: number;
+    schedule: number;
+  };
+  symbols: string;
 }
 
 export class RsiBotStack extends Stack {
@@ -34,9 +45,14 @@ export class RsiBotStack extends Stack {
     this.customLayer = this._createCustomLayer();
     this.rsiOrderExecLambda = this._createRsiOrderExecLambda(
       this.customLayer,
-      this.lambdaRole
+      this.lambdaRole,
+      props
     );
-    this._createRsiOptimizationsLambda(this.customLayer, this.lambdaRole);
+    this._createRsiOptimizationsLambda(
+      this.customLayer,
+      this.lambdaRole,
+      props
+    );
   }
 
   // create iam access role for lambda
@@ -92,7 +108,11 @@ export class RsiBotStack extends Stack {
   }
 
   // create rsi optimizations lambda
-  _createRsiOptimizationsLambda(customLayer: LayerVersion, role: Role): void {
+  _createRsiOptimizationsLambda(
+    customLayer: LayerVersion,
+    role: Role,
+    props: RsiBotStackProps
+  ): void {
     const rsiOptimizationsFunction = new Function(
       this,
       'rsi-optimizations-function',
@@ -101,8 +121,8 @@ export class RsiBotStack extends Stack {
         runtime: Runtime.PYTHON_3_9,
         handler: 'rsi_optimizations.lambda_handler',
         code: Code.fromAsset('lambdas'),
-        memorySize: 1536,
-        timeout: Duration.minutes(10),
+        memorySize: props.optimizationLambda.memorySize,
+        timeout: Duration.minutes(props.optimizationLambda.timeout),
         layers: [
           customLayer,
           LayerVersion.fromLayerVersionArn(
@@ -114,6 +134,7 @@ export class RsiBotStack extends Stack {
         environment: {
           API_KEY: process.env.API_KEY || '',
           SECRET_KEY: process.env.SECRET_KEY || '',
+          SYMBOLS: props.symbols,
         },
         role: role,
       }
@@ -121,21 +142,27 @@ export class RsiBotStack extends Stack {
 
     // add scheduler
     const rule = new Rule(this, 'rsi-optimizations-rule', {
-      schedule: Schedule.rate(Duration.hours(24)),
+      schedule: Schedule.rate(
+        Duration.hours(props.optimizationLambda.schedule)
+      ),
     });
 
     rule.addTarget(new LambdaFunction(rsiOptimizationsFunction));
   }
 
   // create rsi order exec lambda
-  _createRsiOrderExecLambda(customLayer: LayerVersion, role: Role): Function {
+  _createRsiOrderExecLambda(
+    customLayer: LayerVersion,
+    role: Role,
+    props: RsiBotStackProps
+  ): Function {
     const rsiOrderExecLambda = new Function(this, 'rsi-order-exec-function', {
       functionName: 'rsi-order-exec-function',
       runtime: Runtime.PYTHON_3_9,
       handler: 'order_exec.lambda_handler',
       code: Code.fromAsset('lambdas'),
-      memorySize: 1536,
-      timeout: Duration.minutes(10),
+      memorySize: props.execLambda.memorySize,
+      timeout: Duration.minutes(props.execLambda.timeout),
       layers: [
         customLayer,
         LayerVersion.fromLayerVersionArn(
@@ -148,13 +175,14 @@ export class RsiBotStack extends Stack {
         API_KEY: process.env.API_KEY || '',
         SECRET_KEY: process.env.SECRET_KEY || '',
         BASE_URL: process.env.BASE_URL || '',
+        SYMBOLS: props.symbols,
       },
       role: role,
     });
 
     // add scheduler
     const rule = new Rule(this, 'rsi-order-exec-rule', {
-      schedule: Schedule.rate(Duration.minutes(10)),
+      schedule: Schedule.rate(Duration.minutes(props.execLambda.schedule)),
     });
 
     rule.addTarget(new LambdaFunction(rsiOrderExecLambda));
