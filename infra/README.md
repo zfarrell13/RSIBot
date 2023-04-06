@@ -15,7 +15,6 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 * `cdk synth`       emits the synthesized CloudFormation template
 
 ## exec lambda pricing analysis
-
 ### unit conversions
 `Amount of memory allocated: 1536 MB x 0.0009765625 GB in a MB = 1.5 GB` \
 `Amount of ephemeral storage allocated: 512 MB x 0.0009765625 GB in a MB = 0.5 GB`
@@ -36,7 +35,6 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
 
 ## rsi optimization lambda pricing analysis
-
 ### pricing calculations
 
 ### unit conversions
