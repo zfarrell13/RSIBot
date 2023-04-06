@@ -17,12 +17,12 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ## exec lambda pricing analysis
 
 ### unit conversions
-Amount of memory allocated: 1536 MB x 0.0009765625 GB in a MB = 1.5 GB
-Amount of ephemeral storage allocated: 512 MB x 0.0009765625 GB in a MB = 0.5 GB
+`Amount of memory allocated: 1536 MB x 0.0009765625 GB in a MB = 1.5 GB`
+`Amount of ephemeral storage allocated: 512 MB x 0.0009765625 GB in a MB = 0.5 GB`
 
 
 ### pricing calculations
-4,320 requests x 60,000 ms x 0.001 ms to sec conversion factor = 259,200.00 total compute (seconds)
+`4,320 requests x 60,000 ms x 0.001 ms to sec conversion factor = 259,200.00 total compute (seconds)`
 1.50 GB x 259,200.00 seconds = 388,800.00 total compute (GB-s)
 388,800.00 GB-s - 400000 free tier GB-s = -11,200.00 GB-s
 Max (-11200.00 GB-s, 0 ) = 0.00 total billable GB-s
