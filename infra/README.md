@@ -29,7 +29,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 `Total tier cost = 0.0000 USD (monthly compute charges)`\
 `4,320 requests - 1000000 free tier requests = -995,680 monthly billable requests`\
 `Max (-995680 monthly billable requests, 0 ) = 0.00 total monthly billable requests`\
-`0.50 GB - 0.5 GB (no additional charge) = 0.00 GB billable ephemeral storage per function`\
+`0.50 GB - 0.5 GB (no additional charge) = 0.00 GB billable ephemeral storage per function`
 
 #### Lambda costs - With Free Tier (monthly): 0.00 USD
 
@@ -50,6 +50,6 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 `Total tier cost = 0.0000 USD (monthly compute charges)`\
 `30 requests - 1000000 free tier requests = -999,970 monthly billable requests`\
 `Max (-999970 monthly billable requests, 0 ) = 0.00 total monthly billable requests`\
-`0.50 GB - 0.5 GB (no additional charge) = 0.00 GB billable ephemeral storage per function`\
+`0.50 GB - 0.5 GB (no additional charge) = 0.00 GB billable ephemeral storage per function`
 
 #### Lambda costs - With Free Tier (monthly): 0.00 USD
