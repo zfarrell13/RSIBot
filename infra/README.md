@@ -42,7 +42,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 `Amount of ephemeral storage allocated: 512 MB x 0.0009765625 GB in a MB = 0.5 GB`
 
 ### pricing calculations
-`30 requests x 360,000 ms x 0.001 ms to sec conversion factor = 10,800.00 total compute (seconds)\
+`30 requests x 360,000 ms x 0.001 ms to sec conversion factor = 10,800.00 total compute (seconds)`\
 `1.50 GB x 10,800.00 seconds = 16,200.00 total compute (GB-s)`\
 `16,200.00 GB-s - 400000 free tier GB-s = -383,800.00 GB-s`\
 `Max (-383800.00 GB-s, 0 ) = 0.00 total billable GB-s`\
