@@ -17,7 +17,7 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 ## exec lambda pricing analysis
 
 ### unit conversions
-`Amount of memory allocated: 1536 MB x 0.0009765625 GB in a MB = 1.5 GB`
+`Amount of memory allocated: 1536 MB x 0.0009765625 GB in a MB = 1.5 GB` \
 `Amount of ephemeral storage allocated: 512 MB x 0.0009765625 GB in a MB = 0.5 GB`
 
 
